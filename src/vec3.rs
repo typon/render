@@ -7,6 +7,12 @@ impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self { e: [x, y, z] }
     }
+    pub fn zeros() -> Self {
+        Self::new(0.0, 0.0, 0.0)
+    }
+    pub fn ones() -> Self {
+        Self::new(1.0, 1.0, 1.0)
+    }
     pub fn x(&self) -> f32 {
         self.e[0]
     }
@@ -49,6 +55,17 @@ impl std::ops::Add for &Vec3 {
             self.z() + other.z(),
         ];
         Vec3 { e: sum }
+    }
+}
+
+impl std::ops::AddAssign for Vec3 {
+    fn add_assign(&mut self, other: Self) {
+        let sum = [
+            self.x() + other.x(),
+            self.y() + other.y(),
+            self.z() + other.z(),
+        ];
+        self.e = sum;
     }
 }
 
@@ -123,6 +140,14 @@ impl std::ops::Div<f32> for &Vec3 {
     }
 }
 
+impl std::ops::DivAssign<f32> for Vec3 {
+    fn div_assign(&mut self, divisor: f32) {
+        self.e[0] = self.x() / divisor;
+        self.e[1] = self.y() / divisor;
+        self.e[2] = self.z() / divisor;
+    }
+}
+
 impl std::ops::Index<usize> for Vec3 {
     type Output = f32;
 
@@ -176,10 +201,6 @@ pub fn cross(v1: &Vec3, v2: &Vec3) -> Vec3 {
 pub fn is_close(v1: &Vec3, v2: &Vec3, thresh: f32) -> bool {
     let diff = v1 - v2;
     diff.e[0] < thresh && diff.e[1] < thresh && diff.e[2] < thresh
-}
-
-pub fn red() -> Vec3 {
-    Vec3::new(1.0, 0.0, 0.0)
 }
 
 #[cfg(test)]

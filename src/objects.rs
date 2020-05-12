@@ -1,5 +1,6 @@
 use crate::ray::Ray;
 use crate::vec3::{dot, Vec3};
+use rand::Rng;
 
 pub struct HitRecord {
     pub t: f32,
@@ -77,6 +78,17 @@ impl Object for Collection {
             }
         }
         return closest_hit_rec;
+    }
+}
+
+pub fn random_point_in_unit_sphere() -> Vec3 {
+    let mut rng = rand::thread_rng();
+    loop {
+        let p =
+            2.0 * Vec3::new(rng.gen::<f32>(), rng.gen::<f32>(), rng.gen::<f32>()) - Vec3::ones();
+        if p.squared_length() < 1.0 {
+            return p;
+        }
     }
 }
 
