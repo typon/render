@@ -108,6 +108,14 @@ impl std::ops::Sub for Vec3 {
     }
 }
 
+impl std::ops::Mul for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, v: Vec3) -> Self::Output {
+        Vec3::new(self.x() * v.x(), self.y() * v.y(), self.z() * v.z())
+    }
+}
+
 impl std::ops::Mul<Vec3> for f32 {
     type Output = Vec3;
 

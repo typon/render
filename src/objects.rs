@@ -1,11 +1,14 @@
+use crate::material::{Lambertian, Material};
 use crate::ray::Ray;
 use crate::vec3::{dot, Vec3};
 use rand::Rng;
+use std::rc::{Rc, Weak};
 
 pub struct HitRecord {
     pub t: f32,
     pub p: Vec3,
     pub normal: Vec3,
+    pub material: Weak<Box<dyn Material>>,
 }
 
 pub trait Object {
@@ -19,13 +22,15 @@ pub struct Collection {
 pub struct Sphere {
     pub center: Vec3,
     pub radius: f32,
+    pub material: Rc<Box<dyn Material>>,
 }
 
 impl Sphere {
-    pub fn new(center: &Vec3, radius: f32) -> Self {
+    pub fn new(center: &Vec3, radius: f32, material: Rc<Box<dyn Material>>) -> Self {
         Self {
             center: center.clone(),
             radius,
+            material,
         }
     }
 }
@@ -47,6 +52,7 @@ impl Object for Sphere {
                     t: close_t,
                     p,
                     normal,
+                    material: Rc::downgrade(&self.material),
                 });
             }
             let far_t = (-b + discriminant.sqrt()) / a;
@@ -57,6 +63,7 @@ impl Object for Sphere {
                     t: far_t,
                     p,
                     normal,
+                    material: Rc::downgrade(&self.material),
                 });
             }
         }
@@ -97,8 +104,10 @@ mod objects_tests {
     #[test]
     fn sphere() {
         use super::*;
+        let albedo = Vec3::new(0.8, 0.6, 0.2);
+        let lamb = Rc::new(Box::new(Lambertian { albedo }) as Box<dyn Material>);
         let orig = Vec3::new(0.0, 0.0, 0.0);
-        let sphere = Sphere::new(&orig, 2.0);
+        let sphere = Sphere::new(&orig, 2.0, lamb);
         assert_eq!(sphere.radius, 2.0);
         assert_eq!(sphere.center, orig);
     }

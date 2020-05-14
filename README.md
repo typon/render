@@ -1,1 +1,2 @@
-![balls](diffuse.ppm)
+![balls](diffuse.png)
+![metal balls](metals.png)
